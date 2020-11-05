@@ -1,0 +1,13 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "SetupGame,
+    "key" : {
+        "game_id": { "S" : "$util.autoId()" },
+        "user_id": { "S" : "${context.identity.username}" }
+    },
+    "attributeValues" : {
+       "name": { "S": "${context.arguments.name}" },
+       "rows": { "N": ${context.arguments.rows}" },
+       "cols": { "N": ${context.arguments.cols}" }
+    }
+}

@@ -1,0 +1,40 @@
+{
+  "Comment": "Game play in several states",
+  "StartAt": "BeginPlay",
+  "States": {
+    "BeginPlay": {
+      "Type": "Pass",
+      "Result": "Hello",
+      "Next": "GatherInputs"
+    },
+    "GatherInputs": {
+      "Type": "Pass",
+      "Result": "World",
+      "Next": "UpdateWorld"
+    },
+    "UpdateWorld": {
+      "Type": "Pass",
+      "Result": "MovesMade",
+      "Next": "EvaluateNextStep"
+    },
+    "EvaluateNextStep": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.gameOver",
+          "NumericEquals": 1,
+          "Next": "EndGame"
+        },
+        {
+          "Variable": "$.gameOver",
+          "NumericEquals": 0,
+          "Next": "GatherInputs"
+        }
+      ]
+    },
+    "EndGame": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}

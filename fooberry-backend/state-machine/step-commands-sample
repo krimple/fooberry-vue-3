@@ -1,0 +1,15 @@
+creating a state machine
+aws stepfunctions --endpoint http://localhost:8083 create-state-machine --definition "{\\n \"Comment\": \"A Hello World example of the Amazon States Language using an AWS Lambda Local function\",\\n  \"StartAt\": \"HelloWorld\",\\n  \"States\": {\\n    \"HelloWorld\": {\\n      \"Type\": \"Task\",\\n      \"Resource\": \"arn:aws:lambda:us-east-1:123456789012:function:HelloWorldFunction\",\\n      \"End\": true\\n    }\\n  }\\n}\\n}}" --name "HelloWorld" --role-arn "arn:aws:iam::012345678901:role/DummyRole"
+listing state machines
+aws stepfunctions --endpoint http://localhost:8083 list-state-machines
+starting an execution
+aws stepfunctions --endpoint http://localhost:8083 start-execution --state-machine arn:aws:states:us-east-1:123456789012:stateMachine:HelloWorld --name test
+describe an execution
+aws stepfunctions --endpoint http://localhost:8083 describe-execution --execution-arn arn:aws:states:us-east-1:123456789012:execution:HelloWorld:test
+
+aws stepfunctions --endpoint http://localhost:8083 create-state-machine --definition '{ "Comment": "A Hello World example of the Amazon States Language using an AWS Lambda Local function",  "StartAt": "HelloWorld",  "States": {    "HelloWorld": {      "Type": "Task",      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:HelloWorldFunction",      "End": true    }  }}}}" --name "HelloWorld" --role-arn "arn:aws:iam::012345678901:role/DummyRole'
+
+
+
+aws stepfunctions --endpoint http://localhost:8083 create-state-machine --definition '{ "Comment": "A Hello World example of the Amazon States Language using an AWS Lambda Local function",  "StartAt": "HelloWorld",  "States": {    "HelloWorld": {      "Type": "Task",      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:HelloWorldFunction",      "End": true    }  }}}}" --name "HelloWorld" --role-arn "arn:aws:iam::012345678901:role/DummyRole' --name boogity --role-arn "arn:aws:iam::012345678901:role/DummyRole"
+

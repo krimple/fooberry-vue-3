@@ -1,0 +1,280 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: AWS AppSync Fooberry API
+
+Parameters:
+  ConfigS3Bucket:
+    Type:          String
+    Description:   "The S3 Bucket to access state definitions and graphql configs"
+    # The LocalStack bucket by default
+    Default:       "s3://kendemo-s3-bucket"
+
+Resources:
+  SNSRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: "An IAM Role to allow Cognito to send SNS messages"
+      RoleName: !Sub ${AWS::StackName}-cognito-sns-role
+      ManagedPolicyArns:
+        - !Ref CognitoSNSPolicy
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - cognito-idp.amazonaws.com
+
+  AWSStepFunctionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: "An IAM Role to allow step functions"
+      RoleName: !Sub ${AWS::StackName}-step-fns-sns-role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:InvokeFunction
+            Principal:
+              - "*"
+
+  CognitoSNSPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Managed policy to allow Amazon Cognito to access SNS
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sns:publish
+            Resource: "*"
+
+  AppSyncDynamoDBPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Managed policy to allow AWS AppSync to access the tables created by this template.
+      Path: /appsync/
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
+              - dynamodb:UpdateItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+            Resource: !Join [ "", [ !GetAtt DynamoDBGameTable.Arn, "*" ] ]
+
+  DynamoDBRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}-appsync-dynamodb-role
+      ManagedPolicyArns:
+        - !Ref AppSyncDynamoDBPolicy
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - appsync.amazonaws.com
+  UserPool:
+    Type: "AWS::Cognito::UserPool"
+    Properties:
+      UserPoolName: !Sub ${AWS::StackName}-user-pool
+      AutoVerifiedAttributes:
+        - phone_number
+      MfaConfiguration: "ON"
+      SmsConfiguration:
+        ExternalId: !Sub ${AWS::StackName}-external
+        SnsCallerArn: !GetAtt SNSRole.Arn
+      Schema:
+        - Name: name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: email
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+        - Name: phone_number
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+
+  UserPoolClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+      ClientName: !Sub ${AWS::StackName}-appsync-client
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool
+
+  DynamoDBGameTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: !Sub "${AWS::StackName}_games"
+      KeySchema:
+        - AttributeName: GameId
+          KeyType: HASH
+        - AttributeName: UserId
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: GameId
+          AttributeType: S
+        - AttributeName: UserId
+          AttributeType: S
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
+  AppSyncApi:
+    Type: "AWS::AppSync::GraphQLApi"
+    Properties:
+      AuthenticationType: "AMAZON_COGNITO_USER_POOLS"
+      Name: !Sub ${AWS::StackName}
+      UserPoolConfig:
+        UserPoolId: !Ref UserPoolClient
+        AwsRegion: !Sub ${AWS::Region}
+        DefaultAction: "ALLOW"
+
+  AppSyncSchema:
+    Type: "AWS::AppSync::GraphQLSchema"
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DefinitionS3Location: !Ref ConfigS3Bucket
+
+  AppSyncGameTableDataSource:
+    Type: "AWS::AppSync::DataSource"
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: !Sub ${AWS::StackName}_games_datasource
+      Description: "The Notes Table AppSync Data Source"
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt DynamoDBRole.Arn
+      DynamoDBConfig:
+        TableName: !Ref DynamoDBGameTable
+        AwsRegion: !Sub ${AWS::Region}
+
+  AppSyncGetGamesQueryResolver:
+    Type: "AWS::AppSync::Resolver"
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: getGame
+      DataSourceName: !GetAtt AppSyncGameTableDataSource.Name
+      RequestMappingTemplate: |
+        {
+          "version": "2012-02-28",
+          "operation": "GetItem",
+          "key": {
+            "GameId": $util.dynamodb.toDynamoDBJson($ctx.args.GameId),
+            "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub)
+          }
+        }
+      ResponseMappingTemplate: "$util.toJson($ctx.result)"
+
+  AddGameResolver:
+    Type: "AWS::AppSync::Resolver"
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: addGame
+      DataSourceName: !GetAtt AppSyncGameTableDataSource.Name
+      RequestMappingTemplate: |
+        {
+          "version": "2012-02-28",
+          "operation": "PutItem",
+          "key": {
+            "GameId": $util.dynamodb.toDynamoDBJson($ctx.args.GameId),
+            "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub)
+          },
+          "attributeValues": {
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.name),
+            "rows": $util.dynamodb.toDynamoDBJson($ctx.args.rows),
+            "cols": $util.dynamodb.toDynamoDBJson($ctx.args.cols),
+            "players": $util.dynamodb.toDynamoDBJson($ctx.args.content)
+          }
+        }
+      ResponseMappingTemplate: "$util.toJson($ctx.result)"
+
+  UpdatePlayersResolver:
+    Type: "AWS::AppSync::Resolver"
+    DependsOn: AppSyncSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: updateGameState
+      DataSourceName: !GetAtt AppSyncGameTableDataSource.Name
+      RequestMappingTemplate: |
+        {
+          "version": "2012-02-28",
+          "operation": "UpdateItem",
+          "key": {
+            "GameId": $util.dynamodb.toDynamoDBJson($ctx.args.GameId),
+            "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub)
+          },
+          "update": {
+            "expression": "SET players = :players",
+            "expressionValues": {
+              ":players": $util.dynamodb.toDynamoDBJson($ctx.args.content)
+            }
+          }
+        }
+      ResponseMappingTemplate: "$util.toJson($ctx.result)"
+
+  GameStateMachine:
+    Type: "AWS::StepFunctions::StateMachine"
+    Properties:
+      RoleArn: AWSStepFunctionsRole.Arn
+      DefinitionS3Location:
+        Bucket: !Ref ConfigS3Bucket
+        Key:    gameplay_definition.json
+      StateMachineName: !Sub "${AWS::StackName}GameStateMachine"
+      StateMachineType: "STANDARD"
+
+#
+#  AppSyncDeleteNoteMutationResolver:
+#    Type: "AWS::AppSync::Resolver"
+#    DependsOn: AppSyncSchema
+#    Properties:
+#      ApiId: !GetAtt AppSyncApi.ApiId
+#      TypeName: Mutation
+#      FieldName: deleteNote
+#      DataSourceName: !GetAtt AppSyncNotesTableDataSource.Name
+#      RequestMappingTemplate: |
+#        {
+#          "version": "2012-02-28",
+#          "operation": "DeleteItem",
+#          "key": {
+#            "NoteId": $util.dynamodb.toDynamoDBJson($ctx.args.NoteId),
+#            "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub)
+#          }
+#        }
+#      ResponseMappingTemplate: "$util.toJson($ctx.result)"
+
+Outputs:
+  CognitoUserPoolId:
+    Description: The Pool ID of the Cognito User Pool
+    Value: !Ref UserPool
+  CognitoUserPoolClientId:
+    Description: The Client ID for AWS AppSync Auth
+    Value: !Ref UserPoolClient
+  DynamoDBGameTableName:
+    Description: The name of the DynamoDB Table
+    Value: !Ref DynamoDBGameTable
+  GraphQLApiEndpoint:
+    Description: The URL to the GraphQL Endpoint
+    Value: !GetAtt AppSyncApi.GraphQLUrl
+  GraphQLApiId:
+    Description: The API ID of the GraphQL API
+    Value: !GetAtt AppSyncApi.ApiId

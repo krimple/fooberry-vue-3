@@ -1,0 +1,11 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: AWS AppSync Infra Preconditions
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+
+Outputs:
+  StepFunctionsBucketName:
+    Description: "The S3 bucket our step functions live in"
+    Value: !Ref S3Bucket

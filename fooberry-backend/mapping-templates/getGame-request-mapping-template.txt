@@ -1,0 +1,8 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "expressionValues": {
+      "game_id":  "${context.arguments.game_id}",
+      "user_id": "${context.identity.username}"
+    }
+}

@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  lambda-exec:
+    image: lambci/lambda:python3.8
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./lambdas/functions:/var/task:ro,delegated
+    command: 'hello.handler'
+    environment:
+      - DOCKER_LAMBDA_STAY_OPEN=1
+
+  step-commands-exec:
+    env_file: ./.env
+    image: amazon/aws-stepfunctions-local
+#    build:
+#      dockerfile: state-machine/Dockerfile
+#      context: .
+#    entrypoint:
+#      - "/tmp/bin/entrypoint.sh"
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./state-machine/bin:/tmp/bin:ro,delegated
+      - ./state-machine/workflows:/tmp/workflows:ro,delegated
+

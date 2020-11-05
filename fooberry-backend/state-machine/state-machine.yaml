@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: AWS AppSync Fooberry API
+
+Parameters:
+  ConfigS3Bucket:
+    Type:          String
+    Description:   "The S3 Bucket to access state definitions and graphql configs"
+    # The LocalStack bucket by default
+    Default:       "s3://kendemo-s3-bucket"
+
+Resources:
+  AWSStepFunctionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: "An IAM Role to allow step functions"
+      RoleName: !Sub ${AWS::StackName}-step-fns-role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:InvokeFunction
+            Principal:
+              - "*"
+
+  GameStateMachine:
+    Type: "AWS::StepFunctions::StateMachine"
+    Properties:
+      RoleArn: AWSStepFunctionsRole.Arn
+      DefinitionS3Location:
+        Bucket: !Ref ConfigS3Bucket
+        Key:    gameplay_definition.json
+      StateMachineName: !Sub "${AWS::StackName}GameStateMachine"
+      StateMachineType: "STANDARD"
+
+
