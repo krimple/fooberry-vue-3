@@ -1,22 +1,63 @@
+plugins {
+    id "org.springframework.boot" version "$LIB_SPRING_BOOT_VER" apply false
+}
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+
+apply plugin: 'idea'
+apply plugin: 'java'
+
+group "$PROJECT_GROUP"
+
 repositories {
     jcenter()
     mavenCentral()
 }
 
-apply plugin: "org.springframework.boot"
-
 dependencies {
-    implementation(project(":altair-spring-boot-starter"))
-    implementation(project(":graphql-spring-boot-starter"))
-    implementation(project(":graphiql-spring-boot-starter"))
-    implementation(project(":voyager-spring-boot-starter"))
-    implementation(project(":playground-spring-boot-starter"))
+    // implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation 'com.graphql-java-kickstart:graphql-spring-boot-starter:8.0.0'
+    implementation 'com.graphql-java-kickstart:graphql-spring-boot-autoconfigure:8.0.0'
+    compile "io.github.graphql-java:graphql-java-annotations:8.3"
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    // for schema-first tools
+    compile 'com.graphql-java-kickstart:graphql-java-tools'
+    // to embed Altair tool
+    runtimeOnly 'com.graphql-java-kickstart:altair-spring-boot-starter:8.0.0'
+
+    // to embed GraphiQL tool
+    runtimeOnly 'com.graphql-java-kickstart:graphiql-spring-boot-starter:8.0.0'
+
+    // to embed Voyager tool
+    runtimeOnly 'com.graphql-java-kickstart:voyager-spring-boot-starter:8.0.0'
+
+    // testing facilities
+    testImplementation 'com.graphql-java-kickstart:graphql-spring-boot-starter-test:8.0.0'
+
+    // implementation("org.springframework.boot:spring-boot-starter-actuator")
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    implementation "org.yaml:snakeyaml"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.apache.commons:commons-text:$LIB_APACHE_COMMONS_TEXT"
+    compileOnly "org.springframework.boot:spring-boot-starter-web"
+    compileOnly "org.springframework.boot:spring-boot-starter-security"
+    compileOnly "io.projectreactor:reactor-core"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-web"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+
+    testRuntimeOnly "org.springframework.boot:spring-boot-starter-webflux"
+
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "com.graphql-java-kickstart:graphql-java-kickstart:$LIB_GRAPHQL_SERVLET_VER"
+    implementation "com.graphql-java-kickstart:graphql-java-servlet:$LIB_GRAPHQL_SERVLET_VER"
+    implementation "com.graphql-java:graphql-java:$LIB_GRAPHQL_JAVA_VER"
+
+    implementation "org.springframework.boot:spring-boot-starter-websocket"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+
+    implementation "org.projectlombok:lombok"
+
 }
-
-jar.enabled = false
-uploadArchives.enabled = false
-bintrayUpload.enabled = false
-publishToMavenLocal.enabled = false

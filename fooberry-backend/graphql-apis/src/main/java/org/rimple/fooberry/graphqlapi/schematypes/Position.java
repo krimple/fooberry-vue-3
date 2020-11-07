@@ -2,11 +2,11 @@ package org.rimple.fooberry.graphqlapi.schematypes;
 
 import java.util.Objects;
 
-public class PositionInput {
+public class Position {
     private int row;
     private int col;
 
-    public PositionInput() {
+    public Position() {
 
     }
 
@@ -30,7 +30,7 @@ public class PositionInput {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PositionInput that = (PositionInput) o;
+        Position that = (Position) o;
         return row == that.row && col == that.col;
     }
 

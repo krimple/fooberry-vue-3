@@ -11,7 +11,7 @@ services:
       - DOCKER_LAMBDA_STAY_OPEN=1
 
   step-commands-exec:
-    env_file: ./.env
+    env_file: ~/.aws/.env
     image: amazon/aws-stepfunctions-local
 #    build:
 #      dockerfile: state-machine/Dockerfile
@@ -24,3 +24,6 @@ services:
       - ./state-machine/bin:/tmp/bin:ro,delegated
       - ./state-machine/workflows:/tmp/workflows:ro,delegated
 
+  graphql-service:
+    env_file: ~/.aws/.env
+    image:
