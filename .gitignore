@@ -18,3 +18,4 @@ ESUsers.json
 *.swp
 
 data/
+venv/
