@@ -4,15 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "dynamodb-generate-seed-data": "cd seed-data && node generate-games.js",
-    "start": "npm run dynamodb-generate-seed-data && serverless dynamodb install && serverless offline start",
     "cfn-lint": "cfn-lint --template-file cloudformation.yaml",
-    "deploy-statemachines": "",
-    "localstack-statedeploy": "awslocal s3 cp state-machine/workflows/gameplay_definition.json s3://`awslocal s3 ls | grep \\\\\\\"kendev\\\\\\\" | cut -d ' '  -f3`/",
-    "localstack-install": "awslocal cloudformation deploy --template-file ./cloudformation.yaml --stack-name kendev --capabilities CAPABILITY_NAMED_IAM",
-    "localstack-update": "npm run localstack-statedeploy && awslocal cloudformation deploy --template-file ./cloudformation.yaml --stack-name kendev --capabilities CAPABILITY_NAMED_IAM",
-    "localstack-remove": "awslocal cloudformation delete-stack --stack-name kendev",
-    "localstack-describe": "awslocal cloudformation describe-stacks --stack-name kendev",
-    "localstack-list": "awslocal cloudformation list-stacks"
   },
   "dependencies": {
     "faker": "^5.1.0",
