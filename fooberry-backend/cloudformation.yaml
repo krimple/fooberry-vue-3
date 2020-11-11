@@ -1,3 +1,7 @@
+# IGNORE THIS FOR NOW - was part of the early prototyping, but will be updated later
+# and likely broken into small stack configs for each service - AppSync is here for
+# reference but may not be used in the end solution
+
 AWSTemplateFormatVersion: "2010-09-09"
 Description: AWS AppSync Fooberry API
 
