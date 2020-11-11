@@ -39,3 +39,9 @@ services:
     environment:
       - DOCKER_LAMBDA_STAY_OPEN=1
 
+  dynamodb:
+    env_file: ~/.aws/.env
+    image: "amazon/dynamodb-local"
+    ports:
+      - "8000:8000"
+

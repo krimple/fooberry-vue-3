@@ -1,0 +1,12 @@
+{
+  "name": "fooberry-backend",
+  "description": "",
+  "version": "0.1.0",
+  "scripts": {
+    "dynamodb-generate-seed-data": "node generate-games.js"
+  },
+  "dependencies": {
+    "faker": "^5.1.0",
+    "jsonfile": "^6.1.0"
+  }
+}
