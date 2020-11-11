@@ -1,3 +1,10 @@
+# Created this dockerfile to allow me to install workflows on container startup
+# for Docker-based local development
+#
+# This way the workflow is initialized for testing in a ci env or local dev
+#
+# Built in ../docker-compose.yml using `docker build`
+
 FROM amazon/aws-stepfunctions-local as stepfns
 
 FROM openjdk:8-alpine
