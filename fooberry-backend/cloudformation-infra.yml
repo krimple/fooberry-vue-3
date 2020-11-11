@@ -1,3 +1,4 @@
+# Also not yet used
 AWSTemplateFormatVersion: "2010-09-09"
 Description: AWS AppSync Infra Preconditions
 
