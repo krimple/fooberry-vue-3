@@ -38,4 +38,4 @@ aws stepfunctions create-state-machine --definition {
       "End": true
     }
   }
-} --region us-east-1 --endpoint http://localhost:8083 --role-arn arn:aws:iam::012345678901:role/DummyRole --name demo
+} --region us-east-1 --endpoint http://localhost:8084 --role-arn arn:aws:iam::012345678901:role/DummyRole --name demo

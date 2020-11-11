@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# If needed, we can customize / deploy workflows
 set -m
 export AWS_REGION=us-east-1
 export AWS_ACCESS_KEY_ID=foo

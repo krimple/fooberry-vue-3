@@ -1,0 +1,129 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  GraphQL test
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+#  GraphQLAPI:
+#    Type:  AWS::Serverless::Api
+#    Properties:
+#      StageName: Prod
+#      Cors:
+#        Properties:
+#          AllowCredentials: True
+#          AllowHeaders: "'X-Forwarded-For'"
+#          AllowMethods: "'POST', 'GET'"
+#          AllowOrigin: *
+
+  GraphQLLambdaFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: graphql-api/
+      Handler: graphql.graphqlHandler
+      Runtime: nodejs12.x
+      Role: !Sub "${IamRoleLambdaExecution.Arn}"
+      Events:
+        GraphQLGet:
+          Type: Api
+          Properties:
+            Path: /graphql
+            Method: get
+        GraphQLPost:
+          Type: Api
+          Properties:
+            Path: /graphql
+            Method: post
+
+#
+#  GraphqlLogGroup:
+#    Type: AWS::Logs::LogGroup
+#    Properties:
+#      LogGroupName: "/aws/lambda/apollo-lambda-dev-graphql"
+#
+  IamRoleLambdaExecution:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName:
+            Fn::Join:
+              - "-"
+              - - apollo-lambda
+                - dev
+                - lambda
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:CreateLogGroup
+                Resource:
+                  - Fn::Sub: arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/apollo-lambda-dev*:*
+              - Effect: Allow
+                Action:
+                  - logs:PutLogEvents
+                Resource:
+                  - Fn::Sub: arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/apollo-lambda-dev*:*:*
+#      Path: "/"
+#      RoleName:
+#        Fn::Join:
+#          - "-"
+#          - - apollo-lambda
+#            - dev
+#            - Ref: AWS::Region
+#            - lambdaRole
+#
+#  GraphQLDeploymentBucket:
+#    Type: AWS::S3::Bucket
+#    Properties:
+#      BucketEncryption:
+#        ServerSideEncryptionConfiguration:
+#          - ServerSideEncryptionByDefault:
+#              SSEAlgorithm: AES256
+#
+#  GraphQLDeploymentBucketPolicy:
+#    Type: AWS::S3::BucketPolicy
+#    Properties:
+#      Bucket:
+#        Ref: GraphQLDeploymentBucket
+#      PolicyDocument:
+#        Statement:
+#          - Action: s3:*
+#            Effect: Deny
+#            Principal: "*"
+#            Resource:
+#              - Fn::Join:
+#                  - ''
+#                  - - 'arn:'
+#                    - Ref: AWS::Partition
+#                    - ":s3:::"
+#                    - Ref: GraphQLDeploymentBucket
+#                    - "/*"
+#            Condition:
+#              Bool:
+#                aws:SecureTransport: false
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/graphql/"
+  GraphQLFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt GraphQLLambdaFunction.Arn

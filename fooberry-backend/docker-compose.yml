@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   lambda-exec:
-    image: lambci/lambda:python3.8
+    image: "lambci/lambda:python3.8"
     ports:
       - "9001:9001"
     volumes:
@@ -9,21 +9,33 @@ services:
     command: 'hello.handler'
     environment:
       - DOCKER_LAMBDA_STAY_OPEN=1
+      - STEP_FNS_URI=https://step-commands-exec:8083
+      - GRAPHQL_ENDPOINT=https://graphql-service:8083
 
   step-commands-exec:
     env_file: ~/.aws/.env
-    image: amazon/aws-stepfunctions-local
-#    build:
-#      dockerfile: state-machine/Dockerfile
-#      context: .
-#    entrypoint:
-#      - "/tmp/bin/entrypoint.sh"
+    image: "amazon/aws-stepfunctions-local"
+    build:
+      dockerfile: state-machine/Dockerfile
+      context: .
+    entrypoint:
+      - "/tmp/bin/entrypoint.sh"
     ports:
       - "8083:8083"
     volumes:
       - ./state-machine/bin:/tmp/bin:ro,delegated
       - ./state-machine/workflows:/tmp/workflows:ro,delegated
+    environment:
+      - LAMBDA_ENDPOINT=http://lambda-exec:9001
 
   graphql-service:
     env_file: ~/.aws/.env
-    image:
+    image: "lambci/lambda:nodejs12.x"
+    ports:
+      - "9002:9001"
+    volumes:
+      - ./sam-graphql/graphql-api:/var/task:ro,delegated
+    command: 'graphql.graphqlHandler'
+    environment:
+      - DOCKER_LAMBDA_STAY_OPEN=1
+

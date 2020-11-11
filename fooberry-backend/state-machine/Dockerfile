@@ -13,7 +13,7 @@ RUN mkdir -p /stepfns
 
 WORKDIR /stepfns
 
-COPY --from=stepfns /home/stepfunctionslocal/* ./
+COPY --from=stepfns /stepfns/* ./
 
 COPY state-machine/bin/entrypoint.sh entrypoint.sh
 
