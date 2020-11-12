@@ -11,8 +11,12 @@ services:
       - DOCKER_LAMBDA_STAY_OPEN=1
       - STEP_FNS_URI=https://step-commands-exec:8083
       - GRAPHQL_ENDPOINT=https://graphql-service:8083
+      - STATEMACHINE_SERVICE_ENDPOINT=https://workflow-exec:8083
+      - DYNAMO_DB_ENDOPOINT=https://dynamodb:8000
+      - MESSAGE="hi mommy"
+      - S3_ENDPOINT=http://localhost:4566
 
-  step-commands-exec:
+  workflow-exec:
     env_file: ~/.aws/.env
     image: "amazon/aws-stepfunctions-local"
     build:
@@ -45,3 +49,15 @@ services:
     ports:
       - "8000:8000"
 
+  fake-s3:
+    image: localstack/localstack:latest
+    ports:
+      - "8085:8083"
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - './.localstack:/tmp/localstack'
+      - '/var/run/docker.sock:/var/run/docker.sock'
