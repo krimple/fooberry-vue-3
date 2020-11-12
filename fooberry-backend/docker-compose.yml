@@ -1,24 +1,44 @@
 version: "3.7"
 services:
-  lambda-exec:
-    image: "lambci/lambda:python3.8"
+  lambda-exec-nodejs:
+    image: "lambci/lambda:nodejs12.x"
     ports:
       - "9001:9001"
     volumes:
       - ./lambdas/functions:/var/task:ro,delegated
-    command: 'hello.handler'
+      - ./lambda-layers/nodejs:/opt/nodejs:ro,delegated
+    command: 'testing.s3demo'
     environment:
       - DOCKER_LAMBDA_STAY_OPEN=1
       - STEP_FNS_URI=https://step-commands-exec:8083
       - GRAPHQL_ENDPOINT=https://graphql-service:8083
       - STATEMACHINE_SERVICE_ENDPOINT=https://workflow-exec:8083
-      - DYNAMO_DB_ENDOPOINT=https://dynamodb:8000
+      - DYNAMO_DB_ENDPOINT=https://dynamodb:8000
       - MESSAGE="hi mommy"
-      - S3_ENDPOINT=http://localhost:4566
+      - AWS_ACCESS_KEY_ID=foo
+      - AWS_SECRET_ACCESS_KEY=bar
+      - S3_ENDPOINT_URL=http://fake-s3:4566
+ # lambda-exec-python:
+ #   image: "lambci/lambda:python3.8"
+ #   ports:
+ #     - "9001:9001"
+ #   volumes:
+ #     - ./lambdas/functions:/var/task:ro,delegated
+ #   command: 'hello.handler'
+ #   environment:
+ #     - DOCKER_LAMBDA_STAY_OPEN=1
+ #     - STEP_FNS_URI=https://step-commands-exec:8083
+ #     - GRAPHQL_ENDPOINT=https://graphql-service:8083
+ #     - STATEMACHINE_SERVICE_ENDPOINT=https://workflow-exec:8083
+ #     - DYNAMO_DB_ENDPOINT=https://dynamodb:8000
+ #     - MESSAGE="hi mommy"
+ #     - AWS_ACCESS_KEY_ID=foo
+ #     - AWS_SECRET_ACCESS_KEY=bar
+ #     - S3_ENDPOINT_URL=http://fake-s3:4566
 
   workflow-exec:
     env_file: ~/.aws/.env
-    image: "amazon/aws-stepfunctions-local"
+    # image: "amazon/aws-stepfunctions-local"
     build:
       dockerfile: state-machine/Dockerfile
       context: .
@@ -30,7 +50,7 @@ services:
       - ./state-machine/bin:/tmp/bin:ro,delegated
       - ./state-machine/workflows:/tmp/workflows:ro,delegated
     environment:
-      - LAMBDA_ENDPOINT=http://lambda-exec:9001
+      - LAMBDA_ENDPOINT=http://lambda-exec-nodejs:9001
 
   graphql-service:
     env_file: ~/.aws/.env

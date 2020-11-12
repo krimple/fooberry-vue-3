@@ -4,8 +4,7 @@ from botocore.exceptions import ClientError
 import sys
 
 def handler(event, context):
-
-    s3_client = boto3.client('s3', endpoint_url=os.environ.env.get('S3_ENDPOINT_URL'))
+    s3_client = boto3.client('s3', endpoint_url=os.environ.get('S3_ENDPOINT_URL'))
 
     try:
         response = s3_client.list_buckets()

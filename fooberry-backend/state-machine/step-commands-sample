@@ -3,7 +3,7 @@ aws stepfunctions --endpoint http://localhost:8083 create-state-machine --defini
 listing state machines
 aws stepfunctions --endpoint http://localhost:8083 list-state-machines
 starting an execution
-aws stepfunctions --endpoint http://localhost:8083 start-execution --state-machine arn:aws:states:us-east-1:123456789012:stateMachine:HelloWorld --name test
+aws stepfunctions --endpoint http://localhost:8083 start-execution --state-machine arn:aws:states:us-east-1:123456789012:stateMachine:hello --name demo
 describe an execution
 aws stepfunctions --endpoint http://localhost:8083 describe-execution --execution-arn arn:aws:states:us-east-1:123456789012:execution:HelloWorld:test
 
