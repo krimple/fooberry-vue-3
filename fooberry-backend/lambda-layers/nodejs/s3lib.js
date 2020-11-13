@@ -7,7 +7,7 @@ async function listBuckets () {
          apiVersion: "2006-03-01",
          endpoint: process.env['S3_ENDPOINT_URL'],
          credentials: {
-             /* TODO: move this out to env vars too */
+             /* TODO: should not need this in production Lambda (due to IAM role/policies) */
              accessKeyId: 'aaa',
              secretAccessKey: 'bbb'
          }

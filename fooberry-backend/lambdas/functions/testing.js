@@ -1,8 +1,7 @@
 const {listBuckets} = require('/opt/nodejs/s3lib');
 async function s3demo(event, ctx, callback) {
-   console.log('stuff is gonna happen');
+   console.log(JSON.stringify(event), JSON.stringify(ctx));
    const result = await listBuckets();
-   console.log('got a result: ', result);
    callback(null, result);
 };
 

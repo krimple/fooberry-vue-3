@@ -50,8 +50,15 @@ services:
       - ./state-machine/bin:/tmp/bin:ro,delegated
       - ./state-machine/workflows:/tmp/workflows:ro,delegated
     environment:
-      - LAMBDA_ENDPOINT=http://lambda-exec-nodejs:9001
+      - LAMBDA_ENDPOINT=http://lambda-reverse-proxy:8080
 
+  lambda-reverse-proxy:
+    image: nginx:stable-alpine
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./lambdas/proxy-server/default.conf:/etc/nginx/conf.d/default.conf
+    
   graphql-service:
     env_file: ~/.aws/.env
     image: "lambci/lambda:nodejs12.x"
