@@ -1,0 +1,23 @@
+DO NOT LOOK IN HERE (yet)
+
+Architecture
+
+
+Front-end API
+
+GraphQL
+
+	queries
+	  - startGame
+	  - makeMove
+	  - joinGame
+	  - leaveGame
+	  - endGame
+
+	subscriptions
+	  - boardUpdates
+
+startWF
+   - call execution engine to start a new workflow
+   - update database with workflow information - new dynamodb row
+   - return GUID for game tracking
