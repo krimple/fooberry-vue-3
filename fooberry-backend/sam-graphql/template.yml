@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   GraphQL test
@@ -9,16 +9,16 @@ Globals:
     Timeout: 3
 
 Resources:
-#  GraphQLAPI:
-#    Type:  AWS::Serverless::Api
-#    Properties:
-#      StageName: Prod
-#      Cors:
-#        Properties:
-#          AllowCredentials: True
-#          AllowHeaders: "'X-Forwarded-For'"
-#          AllowMethods: "'POST', 'GET'"
-#          AllowOrigin: *
+  #  GraphQLAPI:
+  #    Type:  AWS::Serverless::Api
+  #    Properties:
+  #      StageName: Prod
+  #      Cors:
+  #        Properties:
+  #          AllowCredentials: True
+  #          AllowHeaders: "'X-Forwarded-For'"
+  #          AllowMethods: "'POST', 'GET'"
+  #          AllowOrigin: *
 
   GraphQLLambdaFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -39,17 +39,17 @@ Resources:
             Path: /graphql
             Method: post
 
-#
-#  GraphqlLogGroup:
-#    Type: AWS::Logs::LogGroup
-#    Properties:
-#      LogGroupName: "/aws/lambda/apollo-lambda-dev-graphql"
-#
+  #
+  #  GraphqlLogGroup:
+  #    Type: AWS::Logs::LogGroup
+  #    Properties:
+  #      LogGroupName: "/aws/lambda/apollo-lambda-dev-graphql"
+  #
   IamRoleLambdaExecution:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
@@ -65,7 +65,7 @@ Resources:
                 - dev
                 - lambda
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Effect: Allow
                 Action:

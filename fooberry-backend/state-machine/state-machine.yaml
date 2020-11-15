@@ -3,10 +3,10 @@ Description: AWS AppSync Fooberry API
 
 Parameters:
   ConfigS3Bucket:
-    Type:          String
-    Description:   "The S3 Bucket to access state definitions and graphql configs"
+    Type: String
+    Description: "The S3 Bucket to access state definitions and graphql configs"
     # The LocalStack bucket by default
-    Default:       "s3://kendemo-s3-bucket"
+    Default: "s3://kendemo-s3-bucket"
 
 Resources:
   AWSStepFunctionsRole:
@@ -29,8 +29,6 @@ Resources:
       RoleArn: AWSStepFunctionsRole.Arn
       DefinitionS3Location:
         Bucket: !Ref ConfigS3Bucket
-        Key:    gameplay_definition.json
+        Key: gameplay_definition.json
       StateMachineName: !Sub "${AWS::StackName}GameStateMachine"
       StateMachineType: "STANDARD"
-
-

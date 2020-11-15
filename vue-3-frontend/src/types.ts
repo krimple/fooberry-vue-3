@@ -1,5 +1,4 @@
 export interface GameProps {
-    rows: number
-    cols: number
+  rows: number;
+  cols: number;
 }
-

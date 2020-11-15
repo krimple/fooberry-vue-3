@@ -3,11 +3,10 @@
 </template>
 
 <script lang="ts">
-
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed } from "vue";
 
 //eslint-disable-next-line no-unused-vars
-import { useStore } from 'vuex';
+import { useStore } from "vuex";
 
 export default defineComponent({
   setup(props) {
@@ -16,22 +15,21 @@ export default defineComponent({
       return store.getters.calcTile(props.row, props.col);
     });
     return {
-      imgSrc
+      imgSrc,
     };
   },
   props: {
     row: {
       type: Number,
-      required: true
+      required: true,
     },
     col: {
       type: Number,
-      required: true
+      required: true,
     },
-    contents: []
-  }
+    contents: [],
+  },
 });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

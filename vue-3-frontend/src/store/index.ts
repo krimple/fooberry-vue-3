@@ -1,1 +1,1 @@
-export * from './vuex-approach';
+export * from "./vuex-approach";

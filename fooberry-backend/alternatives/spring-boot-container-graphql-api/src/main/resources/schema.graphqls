@@ -1,18 +1,28 @@
 schema {
-    query: Query
-    mutation: Mutation
+  query: Query
+  mutation: Mutation
 }
 
 type Query {
-    queryGames(query: String!): [Game!]!
-    getGameInfo(game_id: String!, user_id: String!): Game
+  queryGames(query: String!): [Game!]!
+  getGameInfo(game_id: String!, user_id: String!): Game
 }
 
 type Mutation {
-    # returns game id
-    createGame(game_id: String!, user_id: String!, name: String, rows: Int!, cols: Int!): Game!
-    # returns new position
-    movePlayer(game_id: String!, user_id: String!, position: PositionInput): Position!
+  # returns game id
+  createGame(
+    game_id: String!
+    user_id: String!
+    name: String
+    rows: Int!
+    cols: Int!
+  ): Game!
+  # returns new position
+  movePlayer(
+    game_id: String!
+    user_id: String!
+    position: PositionInput
+  ): Position!
 }
 
 #type Subscription {
@@ -20,25 +30,25 @@ type Mutation {
 # }
 
 type Game {
-    game_id: String!
-    name: String!
-    rows: Int!
-    cols: Int!
-    players: [ActorInfo]!
+  game_id: String!
+  name: String!
+  rows: Int!
+  cols: Int!
+  players: [ActorInfo]!
 }
 
 type ActorInfo {
-    player_id: String!
-    name: String!
-    strength: Int!
-    position: Position!
+  player_id: String!
+  name: String!
+  strength: Int!
+  position: Position!
 }
 
 input PositionInput {
-    row: Int!
-    col: Int!
+  row: Int!
+  col: Int!
 }
 type Position {
-    row: Int!
-    col: Int!
+  row: Int!
+  col: Int!
 }
