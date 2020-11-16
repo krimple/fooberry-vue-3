@@ -1,0 +1,2 @@
+#!/bin/sh
+dynamodb-admin
