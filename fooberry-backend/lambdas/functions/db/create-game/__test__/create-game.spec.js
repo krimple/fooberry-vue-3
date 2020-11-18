@@ -1,31 +1,21 @@
 const dynamolib = require('../../../../../lambda-layers/nodejs/dynamolib')
 jest.doMock('/opt/nodejs/dynamolib', () => { return dynamolib; }, {virtual: true});
 
-const createGame = require('../create-game');
+const {handler} = require('../index');
 const {v1} = require('uuid');
 
 describe("create game API", () => {
   beforeEach(() => {});
-  it("should create a new game", (done) => {
-    const result = createGame({ 
+  it("should create a new game", async () => {
+    const result = await handler({ 
         newGameInfo: {
           gameId: v1(),
           name: 'FooBerry',
           rows: '10',
           cols: '10'
         }
-      },
-      {},
-      function(error, data) {
-        console.log("callback triggered", error, JSON.stringify(data));
-          if (error) {
-            done.fail(error);
-          } else {
-            expect(data).toBeDefined();
-            console.log(JSON.stringify(data));
-            done();
-          }
-      }
-      );
+      });
+      console.log(JSON.stringify(result));
+      expect(result).toBeDefined();
   });
 });

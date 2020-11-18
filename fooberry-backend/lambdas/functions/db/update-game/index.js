@@ -9,7 +9,7 @@ exports.handler = async event => {
 
   try {
     const db = getDb();
-    const result = await db.putItem(
+    await db.putItem(
       {
         TableName: "FooBerryGames",
         Item: {
@@ -20,7 +20,6 @@ exports.handler = async event => {
         },
       },
     );
-    console.log('putItem result', result);
 
     return {};
   } catch (e) {
