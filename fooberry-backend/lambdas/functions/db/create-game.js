@@ -1,26 +1,14 @@
-const AWS = require("aws-sdk");
+const { getDb } = require("/opt/nodejs/dynamolib");
 const process = require("process");
 const isTest = process.env.JEST_WORKER_ID;
 function createGame(event, ctx, callback) {
-  const db = isTest ? 
-    new AWS.DynamoDB({
-      apiVersion: "2012-08-10",
-      endpoint: 'http://localhost:8000',
-      sslEnabled: false,
-      region: 'local-env'
-    })
-   : 
-   new AWS.DynamoDB({
-      apiVersion: "2012-08-10",
-      region: "us-east-1",
-    });
-
   const { newGameInfo } = event;
 
   // TODO verify
   console.log(`Params: ${JSON.stringify(event)}`);
 
   try {
+    const db = getDb();
     db.putItem(
       {
         TableName: "FooBerryGames",

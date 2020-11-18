@@ -1,3 +1,6 @@
+const dynamolib = require('../../../../lambda-layers/nodejs/dynamolib')
+jest.doMock('/opt/nodejs/dynamolib', () => { return dynamolib; }, {virtual: true});
+
 const createGame = require('../create-game');
 const {v1} = require('uuid');
 
