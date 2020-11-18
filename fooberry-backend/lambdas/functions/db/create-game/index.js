@@ -1,7 +1,7 @@
 const { getDb } = require("/opt/nodejs/dynamolib");
 const process = require("process");
 const isTest = process.env.JEST_WORKER_ID;
-function createGame(event, ctx, callback) {
+exports.handler = async event => {
   const { newGameInfo } = event;
 
   // TODO verify
@@ -9,7 +9,7 @@ function createGame(event, ctx, callback) {
 
   try {
     const db = getDb();
-    db.putItem(
+    await db.putItem(
       {
         TableName: "FooBerryGames",
         Item: {
@@ -19,19 +19,11 @@ function createGame(event, ctx, callback) {
           cols: { N: newGameInfo.cols },
         },
       },
-      (err, data) => {
-        console.log(`callback called Error: ${err} data: ${data}`);
-        if (err) {
-          callback(err, null);
-        } else {
-          callback(null, err);
-        }
-      }
     );
+
+    return {};
   } catch (e) {
-    callback(e, null);
+    return e.toString();
   }
 }
 
-module.exports = createGame;
-exports.handler = createGame;

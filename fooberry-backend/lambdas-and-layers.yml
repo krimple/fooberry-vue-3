@@ -23,11 +23,11 @@ Resources:
   AddGameFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: create-game
+      Handler: index.handler
       Runtime: nodejs12.x
       FunctionName: 'lambda-with-layer'
       Description: 'lambda with layer'
-      CodeUri: ./lambdas/functions/db/create-game/
+      CodeUri: lambdas/functions/db/create-game
       Policies:
         - Statement:
           - Effect: "Allow" 
