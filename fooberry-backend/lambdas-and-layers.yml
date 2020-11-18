@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Fooberry Layers and Lambdas
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  AwsServices:
+      Type: AWS::Serverless::LayerVersion
+      Properties:
+        LayerName: fooberry-node-layer
+        Description: Layer for managing AWS Services for the Fooberry game
+        ContentUri: ./lambda-layers
+        CompatibleRuntimes:
+          - nodejs12.x
+        LicenseInfo: APACHE2
+        RetentionPolicy: Retain
+  
+  AddGameFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: create-game
+      Runtime: nodejs12.x
+      FunctionName: 'lambda-with-layer'
+      Description: 'lambda with layer'
+      CodeUri: ./lambdas/functions/db/create-game/
+      Policies:
+        - Statement:
+          - Effect: "Allow" 
+            Action: 
+              - 'lambda:GetLayerVersion' 
+            Resource: 
+              - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:layer:*:*'
+      Layers:
+        - !Ref AwsServices

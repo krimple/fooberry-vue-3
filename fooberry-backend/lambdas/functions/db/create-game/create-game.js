@@ -34,3 +34,4 @@ function createGame(event, ctx, callback) {
 }
 
 module.exports = createGame;
+exports.handler = createGame;
