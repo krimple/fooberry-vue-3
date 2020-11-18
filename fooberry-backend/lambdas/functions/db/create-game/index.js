@@ -19,7 +19,7 @@ exports.handler = async event => {
           cols: { N: newGameInfo.cols },
         },
       },
-    );
+    ).promise();;
     console.log('putItem result', result);
 
     return {};

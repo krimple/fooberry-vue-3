@@ -19,9 +19,12 @@ exports.handler = async event => {
           cols: { N: newGameInfo.cols },
         },
       },
-    );
+    ).promise();
 
-    return {};
+    return {
+      statusCode: 200,
+      headers: {}
+    };
   } catch (e) {
     return e.toString();
   }
