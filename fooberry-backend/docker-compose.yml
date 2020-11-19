@@ -71,10 +71,14 @@ services:
       - DOCKER_LAMBDA_STAY_OPEN=1
 
   dynamodb:
+    build:
+      dockerfile: dynamodb-local/Dockerfile
+      context: .
     env_file: ~/.aws/.env
-    image: "amazon/dynamodb-local"
     ports:
       - "8000:8000"
+    networks:
+      - awsimulacrum
 
   fake-s3:
     image: localstack/localstack:latest
@@ -88,3 +92,7 @@ services:
     volumes:
       - "./.localstack:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+
+networks:
+  awsimulacrum:
+    name: awsimulacrum

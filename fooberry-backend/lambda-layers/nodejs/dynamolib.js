@@ -5,15 +5,25 @@ const isTest = !! process.env['JEST_WORKER_ID'];
 const isSAMLocal = !! process.env['AWS_SAM_LOCAL'];
 
 function getDb() {
-  if (isTest || isSAMLocal) {
+  if (isTest) {
+    console.log('test dynamo');
     return new AWS.DynamoDB({
       apiVersion: "2012-08-10",
       endpoint: 'http://localhost:8000',
       sslEnabled: false,
       region: 'local-env'
     });
-  } else {
+  } else if (isSAMLocal) {
+    console.log('SAM dynamo');
     return new AWS.DynamoDB({
+      apiVersion: "2012-08-10",
+      endpoint: 'http://dynamodb:8000',
+      sslEnabled: false,
+      region: 'local-env'
+    });
+  } else {
+    console.log('normal dynamo');
+     return new AWS.DynamoDB({
       apiVersion: "2012-08-10"
     });
   }
