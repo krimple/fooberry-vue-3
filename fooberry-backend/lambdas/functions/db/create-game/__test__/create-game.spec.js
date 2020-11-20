@@ -1,23 +1,23 @@
 const { v1 } = require('uuid');
 const dynamolib = require('../../../../../lambda-layers/nodejs/dynamolib')
 jest.doMock('/opt/nodejs/dynamolib', () => { return dynamolib; }, { virtual: true });
-const handler = require('../index').handler;
+// const AWS = require('aws-sdk');
+const { handler } = require('../index');
  
  describe("create game API", () => {
 
-  describe("Mock everything but the Lambda", () => {
-    // the fake method for putting an item to DynamoDB
-    // just resolve a promise
-    let putItemMock = jest.fn(() => {
-      // it returns an object
-      return new Promise({});
-    });
-
+  xdescribe("Mock everything but the Lambda", () => {
+    let putItemMock;
     beforeEach(() => {
-      // now fake its import out to emulate the Lambda layer
-      // and make a fake putItem method
-      jest.spyOn(dynamolib, 'getDb').mockImplementation({
-          putItem: putItemMock
+      jest.createMockFromModule('aws-sdk');
+      AWS.DynamoDB = jest.fn().mockImplementation(() => {
+        return {
+          putItem: jest.fn(() => {
+            return {
+              promise: () => { return Promise.resolve({}); }
+            };
+          })
+        };
       });
     });
 

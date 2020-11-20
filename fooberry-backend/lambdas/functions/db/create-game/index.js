@@ -1,9 +1,11 @@
 const { getDb } = require("/opt/nodejs/dynamolib");
+// const AWS = require('aws-sdk');
 exports.handler = async event => {
   const { newGameInfo } = event;
 
   try {
     const db = getDb();
+    // const db = new AWS.DynamoDB({ apiVersion: '2012-08-10'});
     const result = await db.putItem(
       {
         TableName: "FooBerryGames",
