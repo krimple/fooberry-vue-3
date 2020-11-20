@@ -1,11 +1,6 @@
 const { getDb } = require("/opt/nodejs/dynamolib");
-const process = require("process");
-const isTest = process.env.JEST_WORKER_ID;
 exports.handler = async event => {
   const { newGameInfo } = event;
-
-  // TODO verify
-  console.log(`Params: ${JSON.stringify(event)}`);
 
   try {
     const db = getDb();
@@ -19,8 +14,7 @@ exports.handler = async event => {
           cols: { N: newGameInfo.cols },
         },
       },
-    ).promise();;
-    console.log('putItem result', result);
+    ).promise();
 
     return {};
   } catch (e) {
