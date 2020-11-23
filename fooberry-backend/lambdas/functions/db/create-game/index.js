@@ -18,9 +18,14 @@ exports.handler = async event => {
       },
     ).promise();
 
-    return {};
+    return {
+      statusCode: '201',
+      body: {
+        message: 'created'
+      }
+    };
   } catch (e) {
-    return e.toString();
+    throw new Error(e);
   }
 }
 
