@@ -5,9 +5,10 @@ exports.handler = async event => {
 
   try {
     const db = getDocumentClient();
-    // const db = new AWS.DynamoDB({ apiVersion: '2012-08-10'});
+    // this is a new row
     const result = await db.put({ TableName: 'FooBerryGames',
       Item: {
+         // new ID = new row
           gameId: newGameInfo.gameId,
           name: newGameInfo.name,
           rows: newGameInfo.rows,

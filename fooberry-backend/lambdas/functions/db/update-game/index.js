@@ -1,32 +1,34 @@
-const { getDb } = require("/opt/nodejs/dynamolib");
+const { getDocumentClient } = require("/opt/nodejs/dynamolib");
 const process = require("process");
 const isTest = process.env.JEST_WORKER_ID;
 exports.handler = async event => {
-  const { newGameInfo } = event;
-
-  // TODO verify
-  console.log(`Params: ${JSON.stringify(event)}`);
+  const { updatedGameInfo } = event;
 
   try {
-    const db = getDb();
-    await db.putItem(
-      {
+    const db = getDocumentClient();
+    const result = await db.put({
         TableName: "FooBerryGames",
         Item: {
-          gameId: { S: newGameInfo.gameId },
-          name: { S: newGameInfo.name },
-          rows: { N: newGameInfo.rows },
-          cols: { N: newGameInfo.cols },
+          // TODO - review... do I need this??
+          // assume ID is the same - maybe don't need this
+          // function at all given it is an update of a row
+          // with a hash so semantically it's the same call,
+          // but updates a row rather than creates a new one
+          gameId: updatedGameInfo.gameId,
+          name: updatedGameInfo.name,
+          rows: updatedGameInfo.rows,
+          cols: updatedGameInfo.cols
         },
-      },
-    ).promise();
+      }).promise();
 
-    return {
-      statusCode: 200,
-      headers: {}
-    };
-  } catch (e) {
-    return e.toString();
-  }
+      return {
+        statusCode: '204',
+        body: {
+          message: 'no content'
+        }
+      };
+    } catch (e) {
+      throw new Error(e);
+    }
 }
 
