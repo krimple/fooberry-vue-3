@@ -4,7 +4,7 @@ jest.doMock('/opt/nodejs/dynamolib', () => { return dynamolib; }, { virtual: tru
 const getHandler = require('../index').handler;
 const insertHandler = require('../../create-game/index').handler;
 
-describe('Update Game tests', () => {
+describe('Get Single Game tests', () => {
     let testRowId = v1();
     beforeEach(async () => {
         documentClient = dynamolib.getDocumentClient();
@@ -19,7 +19,7 @@ describe('Update Game tests', () => {
         });
     });
 
-    it('updates successfully', async () => {
+    it('fetches valid game successfully', async () => {
         const row = await getHandler({ gameId: testRowId });
 
         expect(row.gameId).toBe(testRowId);
@@ -27,6 +27,8 @@ describe('Update Game tests', () => {
         expect(row.rows).toBe('10');
         expect(row.cols).toBe('10');
     });
+
+    // TODO - test error condition
 
     afterEach(async () => {
         await dynamolib.getDocumentClient().delete({ TableName: 'FooBerryGames', Key: {
