@@ -1,8 +1,8 @@
 const { v1 } = require('uuid');
 const dynamolib = {
-    getDb: () => {
+    getDocumentClient: () => {
         return {
-            putItem: () => {
+            put: () => {
                 return {
                     promise: async () => {
                         return Promise.reject("I failed");

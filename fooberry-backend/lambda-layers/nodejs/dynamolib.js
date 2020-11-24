@@ -1,6 +1,6 @@
 const process = require('process');
 const AWS = require('aws-sdk');
-
+const { DocumentClient } = require('aws-sdk/clients/dynamodb');
 const isTest = !! process.env['JEST_WORKER_ID'];
 const isSAMLocal = !! process.env['AWS_SAM_LOCAL'];
 
@@ -28,7 +28,7 @@ function getDb() {
 
 function getDocumentClient() {
    if (isTest) {
-    return new AWS.DocumentClient({
+    return new DocumentClient({
       apiVersion: "2012-08-10",
       endpoint: 'http://localhost:8000',
       sslEnabled: false,
@@ -36,7 +36,7 @@ function getDocumentClient() {
       region: 'local-env'
     });
   } else if (isSAMLocal) {
-    return new AWS.DocumentClient({
+    return new DocumentClient({
       apiVersion: "2012-08-10",
       endpoint: 'http://dynamodb:8000',
       sslEnabled: false,
@@ -44,7 +44,7 @@ function getDocumentClient() {
       region: 'local-env'
     });
   } else {
-     return new AWS.DocumentClient({
+     return new DocumentClient({
       apiVersion: "2012-08-10",
       convertEmptyValues: true
     });
