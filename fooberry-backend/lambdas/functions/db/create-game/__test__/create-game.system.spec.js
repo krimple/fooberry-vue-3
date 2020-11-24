@@ -2,7 +2,6 @@ const { v1 } = require('uuid');
 const dynamolib = require('../../../../../lambda-layers/nodejs/dynamolib');
 jest.doMock('/opt/nodejs/dynamolib', () => { return dynamolib; }, { virtual: true });
 const { handler } = require('../index');
-console.log(handler);
 
 describe("Use external, local DynamoDB", () => {
   it("should create a new game using local Dynamo", async () => {

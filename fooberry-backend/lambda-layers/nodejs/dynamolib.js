@@ -6,7 +6,6 @@ const isSAMLocal = !! process.env['AWS_SAM_LOCAL'];
 
 function getDb() {
   if (isTest) {
-    console.log('test dynamo');
     return new AWS.DynamoDB({
       apiVersion: "2012-08-10",
       endpoint: 'http://localhost:8000',
@@ -14,7 +13,6 @@ function getDb() {
       region: 'local-env'
     });
   } else if (isSAMLocal) {
-    console.log('SAM dynamo');
     return new AWS.DynamoDB({
       apiVersion: "2012-08-10",
       endpoint: 'http://dynamodb:8000',
@@ -22,10 +20,34 @@ function getDb() {
       region: 'local-env'
     });
   } else {
-    console.log('normal dynamo');
      return new AWS.DynamoDB({
       apiVersion: "2012-08-10"
     });
   }
 }
-module.exports = { getDb };
+
+function getDocumentClient() {
+   if (isTest) {
+    return new AWS.DocumentClient({
+      apiVersion: "2012-08-10",
+      endpoint: 'http://localhost:8000',
+      sslEnabled: false,
+      convertEmptyValues: true,
+      region: 'local-env'
+    });
+  } else if (isSAMLocal) {
+    return new AWS.DocumentClient({
+      apiVersion: "2012-08-10",
+      endpoint: 'http://dynamodb:8000',
+      sslEnabled: false,
+      convertEmptyValues: true,
+      region: 'local-env'
+    });
+  } else {
+     return new AWS.DocumentClient({
+      apiVersion: "2012-08-10",
+      convertEmptyValues: true
+    });
+  }
+}
+module.exports = { getDb, getDocumentClient };
