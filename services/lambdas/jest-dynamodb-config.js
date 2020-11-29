@@ -7,5 +7,7 @@ module.exports = {
         ProvisionedThroughput: {ReadCapacityUnits: 1, WriteCapacityUnits: 1},
         },
         // etc
-    ]
+    ],
+    // keep it from colliding with Docker instance for real system tests
+    port: 40888
 };
