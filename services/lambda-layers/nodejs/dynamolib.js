@@ -8,7 +8,7 @@ function getDb() {
   if (isTest) {
     return new AWS.DynamoDB({
       apiVersion: "2012-08-10",
-      endpoint: 'http://localhost:8000',
+      endpoint: 'http://localhost:40888',
       sslEnabled: false,
       region: 'local-env'
     });
@@ -30,7 +30,7 @@ function getDocumentClient() {
    if (isTest) {
     return new DocumentClient({
       apiVersion: "2012-08-10",
-      endpoint: 'http://localhost:8000',
+      endpoint: 'http://localhost:40888',
       sslEnabled: false,
       convertEmptyValues: true,
       region: 'local-env'
