@@ -1,0 +1,21 @@
+2020-11-29T16:32:29,334 Using pip 20.2.4 from /usr/local/lib/python3.9/site-packages/pip (python 3.9)
+2020-11-29T16:32:29,336 Non-user install because site-packages writeable
+2020-11-29T16:32:29,340 Created temporary directory: /private/var/folders/r_/0y_zkt590bzcqwck_sph6jwh0000gn/T/pip-ephem-wheel-cache-fajdx1ei
+2020-11-29T16:32:29,340 Created temporary directory: /private/var/folders/r_/0y_zkt590bzcqwck_sph6jwh0000gn/T/pip-req-tracker-fv5gykx1
+2020-11-29T16:32:29,341 Initialized build tracking at /private/var/folders/r_/0y_zkt590bzcqwck_sph6jwh0000gn/T/pip-req-tracker-fv5gykx1
+2020-11-29T16:32:29,341 Created build tracker: /private/var/folders/r_/0y_zkt590bzcqwck_sph6jwh0000gn/T/pip-req-tracker-fv5gykx1
+2020-11-29T16:32:29,341 Entered build tracker: /private/var/folders/r_/0y_zkt590bzcqwck_sph6jwh0000gn/T/pip-req-tracker-fv5gykx1
+2020-11-29T16:32:29,341 Created temporary directory: /private/var/folders/r_/0y_zkt590bzcqwck_sph6jwh0000gn/T/pip-install-o_4_1kca
+2020-11-29T16:32:29,341 ERROR: You must give at least one requirement to install (see "pip help install")
+2020-11-29T16:32:29,341 Exception information:
+2020-11-29T16:32:29,341 Traceback (most recent call last):
+2020-11-29T16:32:29,341   File "/usr/local/lib/python3.9/site-packages/pip/_internal/cli/base_command.py", line 228, in _main
+2020-11-29T16:32:29,341     status = self.run(options, args)
+2020-11-29T16:32:29,341   File "/usr/local/lib/python3.9/site-packages/pip/_internal/cli/req_command.py", line 182, in wrapper
+2020-11-29T16:32:29,341     return func(self, options, args)
+2020-11-29T16:32:29,341   File "/usr/local/lib/python3.9/site-packages/pip/_internal/commands/install.py", line 294, in run
+2020-11-29T16:32:29,341     reqs = self.get_requirements(args, options, finder, session)
+2020-11-29T16:32:29,341   File "/usr/local/lib/python3.9/site-packages/pip/_internal/cli/req_command.py", line 357, in get_requirements
+2020-11-29T16:32:29,341     raise CommandError(
+2020-11-29T16:32:29,341 pip._internal.exceptions.CommandError: You must give at least one requirement to install (see "pip help install")
+2020-11-29T16:32:29,357 Removed build tracker: '/private/var/folders/r_/0y_zkt590bzcqwck_sph6jwh0000gn/T/pip-req-tracker-fv5gykx1'

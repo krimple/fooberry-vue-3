@@ -1,40 +1,14 @@
 version: "3.7"
 services:
-  lambda-exec-nodejs:
+  lambda-create-game:
     image: "lambci/lambda:nodejs12.x"
     ports:
       - "9001:9001"
     volumes:
       - ./lambdas/functions:/var/task:ro,delegated
       - ./lambda-layers/nodejs:/opt/nodejs:ro,delegated
-    command: "testing.s3demo"
-    environment:
-      - DOCKER_LAMBDA_STAY_OPEN=1
-      - STEP_FNS_URI=https://step-commands-exec:8083
-      - GRAPHQL_ENDPOINT=https://graphql-service:8083
-      - STATEMACHINE_SERVICE_ENDPOINT=https://workflow-exec:8083
-      - DYNAMO_DB_ENDPOINT=https://dynamodb:8000
-      - MESSAGE="hi mommy"
-      - AWS_ACCESS_KEY_ID=foo
-      - AWS_SECRET_ACCESS_KEY=bar
-      - S3_ENDPOINT_URL=http://fake-s3:4566
-  # lambda-exec-python:
-  #   image: "lambci/lambda:python3.8"
-  #   ports:
-  #     - "9001:9001"
-  #   volumes:
-  #     - ./lambdas/functions:/var/task:ro,delegated
-  #   command: 'hello.handler'
-  #   environment:
-  #     - DOCKER_LAMBDA_STAY_OPEN=1
-  #     - STEP_FNS_URI=https://step-commands-exec:8083
-  #     - GRAPHQL_ENDPOINT=https://graphql-service:8083
-  #     - STATEMACHINE_SERVICE_ENDPOINT=https://workflow-exec:8083
-  #     - DYNAMO_DB_ENDPOINT=https://dynamodb:8000
-  #     - MESSAGE="hi mommy"
-  #     - AWS_ACCESS_KEY_ID=foo
-  #     - AWS_SECRET_ACCESS_KEY=bar
-  #     - S3_ENDPOINT_URL=http://fake-s3:4566
+    command: "db/create-game/index.handler"
+    env_file: ./.env-lambdas
 
   workflow-exec:
     env_file: ~/.aws/.env

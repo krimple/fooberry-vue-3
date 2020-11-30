@@ -37,3 +37,21 @@ Resources:
               - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:layer:*:*'
       Layers:
         - !Ref AwsServices
+
+  UpdateGameFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs12.x
+      FunctionName: 'lambda-with-layer'
+      Description: 'lambda with layer'
+      CodeUri: lambdas/functions/db/update-game
+      Policies:
+        - Statement:
+          - Effect: "Allow" 
+            Action: 
+              - 'lambda:GetLayerVersion' 
+            Resource: 
+              - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:layer:*:*'
+      Layers:
+        - !Ref AwsServices

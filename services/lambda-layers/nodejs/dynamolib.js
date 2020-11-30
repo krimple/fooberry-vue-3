@@ -17,7 +17,10 @@ function getDb() {
       apiVersion: "2012-08-10",
       endpoint: 'http://dynamodb:8000',
       sslEnabled: false,
-      region: 'local-env'
+      region: 'local-env',
+      accessKeyId: 'aaa',
+      secretAccessKey: 'bbb'
+    
     });
   } else {
      return new AWS.DynamoDB({
