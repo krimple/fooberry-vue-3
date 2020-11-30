@@ -25,3 +25,5 @@ var/
 # docker
 .env
 
+# localstack
+.localstack/
