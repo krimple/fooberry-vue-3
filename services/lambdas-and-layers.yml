@@ -9,6 +9,9 @@ Globals:
     Timeout: 3
 
 Resources:
+  LambdaAPI:
+    Type: AWS::Serverless::HttpApi
+        
   AwsServices:
       Type: AWS::Serverless::LayerVersion
       Properties:
@@ -35,6 +38,13 @@ Resources:
               - 'lambda:GetLayerVersion'
             Resource:
               - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:layer:*:*'
+      Events:
+        CreateGame:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref LambdaAPI
+            Method: POST
+            Path: /create-game
       Layers:
         - !Ref AwsServices
 
@@ -53,5 +63,12 @@ Resources:
               - 'lambda:GetLayerVersion'
             Resource:
               - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:layer:*:*'
+      Events:
+        UpdateGame:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref LambdaAPI
+            Method: POST
+            Path: /update-game
       Layers:
         - !Ref AwsServices
