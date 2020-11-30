@@ -19,21 +19,21 @@ Resources:
           - nodejs12.x
         LicenseInfo: APACHE2
         RetentionPolicy: Retain
-  
+
   AddGameFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
       Runtime: nodejs12.x
-      FunctionName: 'lambda-with-layer'
-      Description: 'lambda with layer'
+      FunctionName: 'create-game-lambda'
+      Description: 'Create game Lambda function'
       CodeUri: lambdas/functions/db/create-game
       Policies:
         - Statement:
-          - Effect: "Allow" 
-            Action: 
-              - 'lambda:GetLayerVersion' 
-            Resource: 
+          - Effect: "Allow"
+            Action:
+              - 'lambda:GetLayerVersion'
+            Resource:
               - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:layer:*:*'
       Layers:
         - !Ref AwsServices
@@ -43,15 +43,15 @@ Resources:
     Properties:
       Handler: index.handler
       Runtime: nodejs12.x
-      FunctionName: 'lambda-with-layer'
-      Description: 'lambda with layer'
+      FunctionName: 'update-game-lambda'
+      Description: 'Update game Lambda function'
       CodeUri: lambdas/functions/db/update-game
       Policies:
         - Statement:
-          - Effect: "Allow" 
-            Action: 
-              - 'lambda:GetLayerVersion' 
-            Resource: 
+          - Effect: "Allow"
+            Action:
+              - 'lambda:GetLayerVersion'
+            Resource:
               - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:layer:*:*'
       Layers:
         - !Ref AwsServices
