@@ -4,31 +4,6 @@ const { DocumentClient } = require('aws-sdk/clients/dynamodb');
 const isTest = !! process.env['JEST_WORKER_ID'];
 const isSAMLocal = !! process.env['AWS_SAM_LOCAL'];
 
-function getDb() {
-  if (isTest) {
-    return new AWS.DynamoDB({
-      apiVersion: "2012-08-10",
-      endpoint: 'http://localhost:40888',
-      sslEnabled: false,
-      region: 'local-env'
-    });
-  } else if (isSAMLocal) {
-    return new AWS.DynamoDB({
-      apiVersion: "2012-08-10",
-      endpoint: 'http://dynamodb:8000',
-      sslEnabled: false,
-      region: 'local-env',
-      accessKeyId: 'aaa',
-      secretAccessKey: 'bbb'
-    
-    });
-  } else {
-     return new AWS.DynamoDB({
-      apiVersion: "2012-08-10"
-    });
-  }
-}
-
 function getDocumentClient() {
    if (isTest) {
     return new DocumentClient({
@@ -53,4 +28,4 @@ function getDocumentClient() {
     });
   }
 }
-module.exports = { getDb, getDocumentClient };
+module.exports = { getDocumentClient };
