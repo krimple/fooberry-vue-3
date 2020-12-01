@@ -1,3 +1,3 @@
 #!/bin/sh
 
-sam local start-lambda --docker-network awsimulacrum --template lambdas-and-layers.yml
+sam local start-lambda --docker-network awsimulacrum --template aws/lambdas-and-layers.yml

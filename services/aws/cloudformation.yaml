@@ -139,103 +139,6 @@ Resources:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
 
-  AppSyncApi:
-    Type: "AWS::AppSync::GraphQLApi"
-    Properties:
-      AuthenticationType: "AMAZON_COGNITO_USER_POOLS"
-      Name: !Sub ${AWS::StackName}
-      UserPoolConfig:
-        UserPoolId: !Ref UserPoolClient
-        AwsRegion: !Sub ${AWS::Region}
-        DefaultAction: "ALLOW"
-
-  AppSyncSchema:
-    Type: "AWS::AppSync::GraphQLSchema"
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Ref ConfigS3Bucket
-
-  AppSyncGameTableDataSource:
-    Type: "AWS::AppSync::DataSource"
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      Name: !Sub ${AWS::StackName}_games_datasource
-      Description: "The Notes Table AppSync Data Source"
-      Type: AMAZON_DYNAMODB
-      ServiceRoleArn: !GetAtt DynamoDBRole.Arn
-      DynamoDBConfig:
-        TableName: !Ref DynamoDBGameTable
-        AwsRegion: !Sub ${AWS::Region}
-
-  AppSyncGetGamesQueryResolver:
-    Type: "AWS::AppSync::Resolver"
-    DependsOn: AppSyncSchema
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Query
-      FieldName: getGame
-      DataSourceName: !GetAtt AppSyncGameTableDataSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2012-02-28",
-          "operation": "GetItem",
-          "key": {
-            "GameId": $util.dynamodb.toDynamoDBJson($ctx.args.GameId),
-            "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub)
-          }
-        }
-      ResponseMappingTemplate: "$util.toJson($ctx.result)"
-
-  AddGameResolver:
-    Type: "AWS::AppSync::Resolver"
-    DependsOn: AppSyncSchema
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Mutation
-      FieldName: addGame
-      DataSourceName: !GetAtt AppSyncGameTableDataSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2012-02-28",
-          "operation": "PutItem",
-          "key": {
-            "GameId": $util.dynamodb.toDynamoDBJson($ctx.args.GameId),
-            "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub)
-          },
-          "attributeValues": {
-            "name": $util.dynamodb.toDynamoDBJson($ctx.args.name),
-            "rows": $util.dynamodb.toDynamoDBJson($ctx.args.rows),
-            "cols": $util.dynamodb.toDynamoDBJson($ctx.args.cols),
-            "players": $util.dynamodb.toDynamoDBJson($ctx.args.content)
-          }
-        }
-      ResponseMappingTemplate: "$util.toJson($ctx.result)"
-
-  UpdatePlayersResolver:
-    Type: "AWS::AppSync::Resolver"
-    DependsOn: AppSyncSchema
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Mutation
-      FieldName: updateGameState
-      DataSourceName: !GetAtt AppSyncGameTableDataSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2012-02-28",
-          "operation": "UpdateItem",
-          "key": {
-            "GameId": $util.dynamodb.toDynamoDBJson($ctx.args.GameId),
-            "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub)
-          },
-          "update": {
-            "expression": "SET players = :players",
-            "expressionValues": {
-              ":players": $util.dynamodb.toDynamoDBJson($ctx.args.content)
-            }
-          }
-        }
-      ResponseMappingTemplate: "$util.toJson($ctx.result)"
-
   GameStateMachine:
     Type: "AWS::StepFunctions::StateMachine"
     Properties:
@@ -245,26 +148,6 @@ Resources:
         Key: gameplay_definition.json
       StateMachineName: !Sub "${AWS::StackName}GameStateMachine"
       StateMachineType: "STANDARD"
-
-#
-#  AppSyncDeleteNoteMutationResolver:
-#    Type: "AWS::AppSync::Resolver"
-#    DependsOn: AppSyncSchema
-#    Properties:
-#      ApiId: !GetAtt AppSyncApi.ApiId
-#      TypeName: Mutation
-#      FieldName: deleteNote
-#      DataSourceName: !GetAtt AppSyncNotesTableDataSource.Name
-#      RequestMappingTemplate: |
-#        {
-#          "version": "2012-02-28",
-#          "operation": "DeleteItem",
-#          "key": {
-#            "NoteId": $util.dynamodb.toDynamoDBJson($ctx.args.NoteId),
-#            "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub)
-#          }
-#        }
-#      ResponseMappingTemplate: "$util.toJson($ctx.result)"
 
 Outputs:
   CognitoUserPoolId:
